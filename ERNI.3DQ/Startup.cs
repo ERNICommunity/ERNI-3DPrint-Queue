@@ -63,9 +63,13 @@ namespace ERNI.Q3D
             if (env.IsDevelopment())
             {
                 db.Database.EnsureDeleted();
+                db.Database.EnsureCreated();
+                DbInitializer.Initialize(db);
             }
-
-            DbInitializer.Initialize(db);
+            else
+            {
+                db.Database.EnsureCreated();
+            }
 
             app.UseStaticFiles();
 
