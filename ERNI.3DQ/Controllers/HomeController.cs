@@ -38,7 +38,8 @@ namespace ERNI.Q3D.Controllers
                 PrintTime = _.PrintTime,
                 Name = _.Name,
                 Id = _.Id,
-                PrintStartedAt = _.PrintStartedAt
+                PrintStartedAt = _.PrintStartedAt,
+                Link = _.SubjectLink
             }).ToList();
 
             var first = jobs.FirstOrDefault();

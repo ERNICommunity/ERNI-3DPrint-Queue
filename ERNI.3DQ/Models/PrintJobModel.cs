@@ -19,5 +19,7 @@ namespace ERNI.Q3D.Models
         public TimeSpan PrintTime { get; set; }
 
         public DateTime? PrintStartedAt { get; set; }
+
+        public string Link { get; set; }
     }
 }

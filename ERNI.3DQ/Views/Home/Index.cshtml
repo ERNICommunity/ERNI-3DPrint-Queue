@@ -45,7 +45,15 @@
                         {
                             <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                         }
-                        @item.Name
+                        
+                        @if (string.IsNullOrWhiteSpace(item.Link))
+                        {
+                            @item.Name
+                        }
+                        else
+                        {
+                            <a href="@item.Link" target="_blank">@item.Name <span class="glyphicon glyphicon-new-window"></span></a>
+                        }
                     </td>
                     <td>@item.CreatedAt.ToString("g")</td>
                     <td>@item.Owner</td>

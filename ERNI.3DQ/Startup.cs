@@ -60,15 +60,11 @@ namespace ERNI.Q3D
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            db.Database.Migrate();
+
             if (env.IsDevelopment())
             {
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
                 DbInitializer.Initialize(db);
-            }
-            else
-            {
-                db.Database.EnsureCreated();
             }
 
             app.UseStaticFiles();

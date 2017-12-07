@@ -103,7 +103,8 @@ namespace ERNI.Q3D.Controllers
                             Name = model.Name,
                             PrintTime = TimeSpan.FromSeconds(time),
                             Size = model.File.Length,
-                            FileName = model.File.FileName
+                            FileName = model.File.FileName,
+                            SubjectLink = model.Link
                         });
 
                         await _db.Value.SaveChangesAsync(c);

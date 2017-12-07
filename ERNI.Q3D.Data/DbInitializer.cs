@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ERNI.Q3D.Data
 {
@@ -6,10 +7,8 @@ namespace ERNI.Q3D.Data
     {
         public static void Initialize(DataContext context)
         {
-            context.Database.EnsureCreated();
-
-            var user = new User { Name = "Test User"};
-            context.Users.Add(user);
+            var user = context.Users.FirstOrDefault(_ => _.Name == "Test User") ?? new User { Name = "Test User" };
+            
             context.PrintJobs.Add(new PrintJob
             {
                 CreatedAt = DateTime.Now,
@@ -18,7 +17,9 @@ namespace ERNI.Q3D.Data
                 FilamentLength = 1.5586,
                 Name = "Test print",
                 PrintTime = new TimeSpan(1, 16, 46),
-                Size = 64
+                Size = 64,
+                FileName = "name.gcode",
+                SubjectLink = "https://www.thingiverse.com/thing:246198"
             });
 
             context.SaveChanges();

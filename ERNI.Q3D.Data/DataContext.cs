@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace ERNI.Q3D.Data
 {
@@ -41,6 +42,8 @@ namespace ERNI.Q3D.Data
         public string FileName { get; set; }
 
         public DateTime? PrintStartedAt { get; set; }
+
+        public string SubjectLink { get; set; }
     }
 
     public class PrintJobData : EntityBase
@@ -59,4 +62,14 @@ namespace ERNI.Q3D.Data
         public long Id { get; set; }
     }
 
+    public class DesignContextFactory : IDesignTimeDbContextFactory<DataContext>
+    {
+        public DataContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<DataContext>();
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ERNI.3DPrintQueue;Trusted_Connection=True");
+
+            return new DataContext(optionsBuilder.Options);
+        }
+    }
 }
