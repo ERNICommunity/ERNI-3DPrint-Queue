@@ -1,0 +1,91 @@
+﻿@using ERNI.Q3D.Models
+@using ERNI.Q3D.Settings
+@using Microsoft.Extensions.Options
+@inject IOptions<PrintWindowSettings> Settings
+@model PrintJobListModel
+@{
+    ViewData["Title"] = "Print Jobs";
+    var isPrintRunning = Model.Jobs.Any(_ => _.PrintStartedAt != null);
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="row">
+    <div class="col-lg-6">
+        <a asp-controller="PrintJob" asp-action="New" class="btn btn-success">New print job</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <table class="table">
+            <thead class="table-header">
+            <tr>
+                <td>Name</td>
+                <td>Created at</td>
+                <td>Owner</td>
+                <td>Filament (m)</td>
+                <td>Print time (hh:mm:ss)</td>
+                @if (isPrintRunning)
+                {
+                    <td>Remaining time (hh:mm:ss)</td>
+                }
+                <td>Size (B)</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Jobs)
+            {
+                var fitsIntoToday = Model.IntervalStart.Add(item.PrintTime) <= DateTime.Today.Add(Settings.Value.EndTime.Add(Settings.Value.MaximumOverfit));
+
+                <tr class="@(fitsIntoToday ? "success" : "danger")">
+                    <td>
+                        @if (item.PrintStartedAt != null)
+                        {
+                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                        }
+                        @item.Name
+                    </td>
+                    <td>@item.CreatedAt.ToString("g")</td>
+                    <td>@item.Owner</td>
+                    <td>@item.FilementLength.ToString("N2") m</td>
+                    <td>@item.PrintTime.ToString("g")</td>
+                    @if (isPrintRunning)
+                    {
+                        if (item.PrintStartedAt != null)
+                        {
+                            <td>@item.PrintTime.Subtract(DateTime.Now.Subtract(item.PrintStartedAt.Value)).ToString("hh\\:mm")</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                    }
+                    
+                    <td>@item.SizeInBytes</td>
+                    <td>
+                        <a asp-controller="PrintJob" asp-action="Download" asp-route-id="@item.Id" title="Download GCode"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></a>
+                        
+                        @if (item.Owner == User.Identity.Name && item.PrintStartedAt == null)
+                        {
+                            <a title="Start print" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to start the print job @item.Name?" asp-controller="PrintJob" asp-action="Start" asp-route-id="@item.Id"><span class="glyphicon glyphicon-print" aria-hidden="true"></span></a>
+                            <a title="Delete job" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to delete the print job @item.Name?" asp-controller="PrintJob" asp-action="Delete" asp-route-id="@item.Id"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                        }
+                    </td>
+                </tr>
+
+                Model.IntervalStart = Model.IntervalStart.Add(item.PrintTime).Add(Settings.Value.Break);
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div>Print window start at: <span class="emphasis">@Settings.Value.StartTime</span></div>
+        <div>Print window ends at: <span class="emphasis">@Settings.Value.EndTime</span></div>
+        <div>Break between prints: <span class="emphasis">@Settings.Value.Break</span></div>
+        <div>Maximum extended print window: <span class="emphasis">@Settings.Value.EndTime.Add(Settings.Value.MaximumOverfit)</span></div>
+    </div>
+</div>
