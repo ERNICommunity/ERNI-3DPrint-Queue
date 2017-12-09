@@ -37,9 +37,10 @@
             <tbody>
             @foreach (var item in Model.Jobs)
             {
-                var fitsIntoToday = Model.IntervalStart.Add(item.PrintTime) <= DateTime.Today.Add(Settings.Value.EndTime.Add(Settings.Value.MaximumOverfit));
+                var fitsIntoToday = Model.IntervalStart.Add(item.PrintTime) <= DateTime.Today.Add(Settings.Value.EndTime);
+                var fitsIntoTodayWithExtension = Model.IntervalStart.Add(item.PrintTime) <= DateTime.Today.Add(Settings.Value.EndTime.Add(Settings.Value.MaximumOverfit));
 
-                <tr class="@(fitsIntoToday ? "success" : "danger")">
+                <tr class="@(fitsIntoToday ? "success" : (fitsIntoTodayWithExtension ? "warning" : "danger"))">
                     <td>
                         @if (item.PrintStartedAt != null)
                         {
@@ -78,7 +79,12 @@
                         @if (item.Owner == User.Identity.Name && item.PrintStartedAt == null && !isPrintRunning)
                         {
                             <a title="Start print" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to start the print job @item.Name?" asp-controller="PrintJob" asp-action="Start" asp-route-id="@item.Id"><span class="glyphicon glyphicon-print" aria-hidden="true"></span></a>
-                            <a title="Delete job" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to delete the print job @item.Name?" asp-controller="PrintJob" asp-action="Delete" asp-route-id="@item.Id"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                            <a title="Delete job" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to delete the print job @item.Name?" asp-controller="PrintJob" asp-action="Delete" asp-route-id="@item.Id"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                        }
+                        @if (item.Owner == User.Identity.Name && isPrintRunning)
+                        {
+                            <a title="Finished" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to mark the print job @item.Name as finished?" asp-controller="PrintJob" asp-action="Finish" asp-route-id="@item.Id"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></a>
+                            <a title="Failed" data-ajax-success="location.reload();" data-ajax="true" data-ajax-method="post" data-ajax-confirm="Do you wish to mark the print job @item.Name as failed?" asp-controller="PrintJob" asp-action="Fail" asp-route-id="@item.Id"><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></a>
                         }
                     </td>
                 </tr>

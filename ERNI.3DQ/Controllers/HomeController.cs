@@ -27,7 +27,7 @@ namespace ERNI.Q3D.Controllers
 
         public async Task<IActionResult> Index(CancellationToken c)
         {
-            var jobs = await _db.PrintJobs.Include(j => j.Owner).OrderBy(_ => _.CreatedAt).ToListAsync(c);
+            var jobs = await _db.PrintJobs.Include(j => j.Owner).Where(_ => !_.IsFinished).OrderBy(_ => _.CreatedAt).ToListAsync(c);
 
             var models = jobs.Select(_ => new PrintJobModel
             {

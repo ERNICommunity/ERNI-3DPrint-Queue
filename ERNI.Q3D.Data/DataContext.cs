@@ -44,6 +44,8 @@ namespace ERNI.Q3D.Data
         public DateTime? PrintStartedAt { get; set; }
 
         public string SubjectLink { get; set; }
+
+        public bool IsFinished { get; set; }
     }
 
     public class PrintJobData : EntityBase

@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -180,6 +179,51 @@ namespace ERNI.Q3D.Controllers
             }
 
             job.PrintStartedAt = DateTime.Now;
+            await _db.Value.SaveChangesAsync(c);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Finish(long id, CancellationToken c)
+        {
+            var job = await _db.Value.PrintJobs.Include(j => j.Owner).Include(_ => _.Data).SingleOrDefaultAsync(_ => _.Id == id, c);
+
+            if (job == null)
+            {
+                return NotFound();
+            }
+
+            if (job.Owner.Name != User.Identity.Name)
+            {
+                return Forbid();
+            }
+
+            job.IsFinished = true;
+            _db.Value.Set<PrintJobData>().Remove(job.Data);
+
+            await _db.Value.SaveChangesAsync(c);
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Fail(long id, CancellationToken c)
+        {
+            var job = await _db.Value.PrintJobs.Include(j => j.Owner).SingleOrDefaultAsync(_ => _.Id == id, c);
+
+            if (job == null)
+            {
+                return NotFound();
+            }
+
+            if (job.Owner.Name != User.Identity.Name)
+            {
+                return Forbid();
+            }
+
+            job.PrintStartedAt = null;
+
             await _db.Value.SaveChangesAsync(c);
 
             return Ok();
