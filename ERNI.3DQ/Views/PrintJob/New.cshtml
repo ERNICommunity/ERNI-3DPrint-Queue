@@ -12,6 +12,8 @@
         <form asp-controller="PrintJob" asp-action="New" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary()
+            
+            @Html.HiddenFor(_ => _.ManualMetadataMode)
 
             <div class="form-group">
                 <label asp-for="Name"></label>
@@ -20,13 +22,29 @@
             
             <div class="form-group">
                 <label asp-for="Link"></label>
-                <input asp-for="Link" class="form-control" placeholder="Link" />
+                <input asp-for="Link" class="form-control" placeholder="Url (optional)" />
             </div>
 
             <div class="form-group">
                 <label asp-for="File"></label>
                 <input asp-for="File" type="file" placeholder="GCode" />
+                <div>
+                    <span class="text-warning">Only GCode files are allowed</span>
+                </div>
             </div>
+            
+            @if (Model.ManualMetadataMode)
+            {
+                <div class="form-group">
+                    <label asp-for="FilamentLength"></label>
+                    <input asp-for="FilamentLength" class="form-control" placeholder="Length in m" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="PrintTime"></label>
+                    <input asp-for="PrintTime" class="form-control" placeholder="hh:mm" />
+                </div>
+            }
             
             <button type="submit" class="btn btn-default">Save</button>
         </form>

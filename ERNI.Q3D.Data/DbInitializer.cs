@@ -7,6 +7,11 @@ namespace ERNI.Q3D.Data
     {
         public static void Initialize(DataContext context)
         {
+            if (context.PrintJobs.Any())
+            {
+                return;
+            }
+
             var user = context.Users.FirstOrDefault(_ => _.Name == "Test User") ?? new User { Name = "Test User" };
             
             context.PrintJobs.Add(new PrintJob

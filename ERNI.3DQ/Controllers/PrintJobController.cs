@@ -38,6 +38,12 @@ namespace ERNI.Q3D.Controllers
                 return View(model);
             }
 
+            if (model.ManualMetadataMode && (model.FilamentLength == 0.0 || model.PrintTime == TimeSpan.Zero))
+            {
+                ModelState.AddModelError("metadata", "You must provide the estimated filament length and print time");
+                return View(model);
+            }
+
             if (Path.GetExtension(model.File.FileName).ToLowerInvariant() != ".gcode")
             {
                 ModelState.AddModelError("filename", "You must upload a GCode file");
@@ -52,7 +58,8 @@ namespace ERNI.Q3D.Controllers
                 using (var reader = new StreamReader(ms))
                 {
                     var timeRegex = new Regex("^;TIME\\s*:\\s*(?<time>[0-9]+)$", RegexOptions.IgnoreCase);
-                    var filamentRegex = new Regex("^;Filament used\\s*:\\s*(?<length>[0-9]+(.[0-9]+)?)m$", RegexOptions.IgnoreCase);
+                    var filamentRegex = new Regex("^;Filament used\\s*:\\s*(?<length>[0-9]+(.[0-9]+)?)m$",
+                        RegexOptions.IgnoreCase);
 
                     var time = 0;
                     var length = 0.0;
@@ -75,6 +82,19 @@ namespace ERNI.Q3D.Controllers
                         {
                             length = double.Parse(lengthMatch.Groups["length"].Value, CultureInfo.InvariantCulture);
                         }
+                    }
+
+                    if (!model.ManualMetadataMode && (length == 0.0 || time == 0))
+                    {
+                        ModelState.Clear();
+                        model.ManualMetadataMode = true;
+                        return View(model);
+                    }
+
+                    if (model.ManualMetadataMode)
+                    {
+                        time = (int)model.PrintTime.TotalSeconds;
+                        length = model.FilamentLength;
                     }
 
                     ms.Seek(0, SeekOrigin.Begin);
