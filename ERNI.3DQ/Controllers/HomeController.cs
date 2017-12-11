@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using static ERNI.Q3D.Utils.Utilities;
 
 namespace ERNI.Q3D.Controllers
 {
@@ -32,7 +33,7 @@ namespace ERNI.Q3D.Controllers
             var models = jobs.Select(_ => new PrintJobModel
             {
                 Owner = _.Owner.Name,
-                SizeInBytes = _.Size,
+                Size = BytesToUnits(_.Size),
                 CreatedAt = _.CreatedAt,
                 FilementLength = _.FilamentLength,
                 PrintTime = _.PrintTime,

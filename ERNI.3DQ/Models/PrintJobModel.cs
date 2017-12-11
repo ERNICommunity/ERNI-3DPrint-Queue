@@ -10,7 +10,7 @@ namespace ERNI.Q3D.Models
 
         public DateTime CreatedAt { get; set; }
 
-        public long SizeInBytes { get; set; }
+        public string Size { get; set; }
 
         public string Owner { get; set; }
 
