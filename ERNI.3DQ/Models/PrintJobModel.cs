@@ -21,5 +21,7 @@ namespace ERNI.Q3D.Models
         public DateTime? PrintStartedAt { get; set; }
 
         public string Link { get; set; }
+
+        public string FilementType { get; set; }
     }
 }

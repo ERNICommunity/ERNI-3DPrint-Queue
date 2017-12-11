@@ -25,6 +25,7 @@
                 <td>Created at</td>
                 <td>Owner</td>
                 <td>Filament (m)</td>
+                <td>Filament type</td>
                 <td>Print time (hh:mm:ss)</td>
                 @if (isPrintRunning)
                 {
@@ -59,6 +60,7 @@
                     <td>@item.CreatedAt.ToString("g")</td>
                     <td>@item.Owner</td>
                     <td>@item.FilementLength.ToString("N2") m</td>
+                    <td>@item.FilementType</td>
                     <td>@item.PrintTime.ToString("g")</td>
                     @if (isPrintRunning)
                     {

@@ -25,7 +25,7 @@ namespace ERNI.Q3D.Data
 
     public class PrintJob : EntityBase
     {
-        public PrintJobData Data { get; set; } 
+        public PrintJobData Data { get; set; }
 
         public User Owner { get; set; }
 
@@ -46,6 +46,15 @@ namespace ERNI.Q3D.Data
         public string SubjectLink { get; set; }
 
         public bool IsFinished { get; set; }
+
+        public FilamentType FilamentType { get; set; }
+    }
+
+    public enum FilamentType
+    {
+        Unknown,
+        PLA,
+        ABS
     }
 
     public class PrintJobData : EntityBase

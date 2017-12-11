@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using ERNI.Q3D.Data;
 using Microsoft.AspNetCore.Http;
 
 namespace ERNI.Q3D.Models
@@ -22,5 +23,8 @@ namespace ERNI.Q3D.Models
         public double FilamentLength { get; set; }
         
         public TimeSpan PrintTime { get; set; }
+
+        [DisplayName("Filament type")]
+        public FilamentType FilamentType { get; set; }
     }
 }
