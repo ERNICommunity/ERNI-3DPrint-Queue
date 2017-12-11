@@ -191,7 +191,7 @@ namespace ERNI.Q3D.Controllers
                 return Forbid();
             }
 
-            var otherRunning = await _db.Value.PrintJobs.FirstOrDefaultAsync(_ => _.PrintStartedAt != null, c);
+            var otherRunning = await _db.Value.PrintJobs.FirstOrDefaultAsync(_ => !_.IsFinished && _.PrintStartedAt != null, c);
 
             if (otherRunning != null)
             {
