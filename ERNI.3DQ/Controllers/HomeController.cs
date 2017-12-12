@@ -9,6 +9,7 @@ using ERNI.Q3D.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using static ERNI.Q3D.Utils.Utilities;
 
@@ -20,12 +21,14 @@ namespace ERNI.Q3D.Controllers
         private readonly DataContext _db;
         private readonly IOptions<PrintWindowSettings> _settings;
         private readonly IAdminProvider _adminProvider;
+        private readonly IMaintenanceProvider _maintenanceProvider;
 
-        public HomeController(DataContext db, IOptions<PrintWindowSettings> settings, IAdminProvider adminProvider)
+        public HomeController(DataContext db, IOptions<PrintWindowSettings> settings, IAdminProvider adminProvider, IMaintenanceProvider maintenanceProvider)
         {
             _db = db;
             _settings = settings;
             _adminProvider = adminProvider;
+            _maintenanceProvider = maintenanceProvider;
         }
 
         public async Task<IActionResult> Index(CancellationToken c)
@@ -62,7 +65,8 @@ namespace ERNI.Q3D.Controllers
             {
                 Jobs = models,
                 IntervalStart = intervalStart,
-                IsAdmin = _adminProvider.IsAdmin(User.Identity)
+                IsAdmin = _adminProvider.IsAdmin(User.Identity),
+                IsMaintenance = _maintenanceProvider.IsUnderMaintenance
             });
         }
 

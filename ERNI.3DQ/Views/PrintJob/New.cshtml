@@ -1,8 +1,14 @@
-﻿@model ERNI.Q3D.Models.NewPrintJobModel
-
+﻿@using ERNI.Q3D
+@model ERNI.Q3D.Models.NewPrintJobModel
+@inject IMaintenanceProvider MaintenanceProvider
 @{
     ViewBag.Title = "New print job";
     Layout = "_Layout";
+}
+
+@if (MaintenanceProvider.IsUnderMaintenance)
+{
+    <div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span> The printer is currently under maintenance. No prints can be triggered and no new prints can be uploaded</div>
 }
 
 <h2>@ViewBag.Title</h2>
@@ -51,7 +57,14 @@
                 </div>
             }
             
-            <button type="submit" class="btn btn-default">Save</button>
+            @if (MaintenanceProvider.IsUnderMaintenance)
+            {
+                <button type="submit" class="btn btn-default" disabled="disabled">Save</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-default">Save</button>
+            }
         </form>
     </div>
 </div>

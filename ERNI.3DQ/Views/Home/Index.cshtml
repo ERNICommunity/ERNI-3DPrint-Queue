@@ -1,11 +1,18 @@
-﻿@using ERNI.Q3D.Models
+﻿@using ERNI.Q3D
+@using ERNI.Q3D.Models
 @using ERNI.Q3D.Settings
 @using Microsoft.Extensions.Options
 @inject IOptions<PrintWindowSettings> Settings
+@inject IMaintenanceProvider MaintenanceProvider
 @model PrintJobListModel
 @{
     ViewData["Title"] = "Print Jobs";
     var isPrintRunning = Model.Jobs.Any(_ => _.PrintStartedAt != null);
+}
+
+@if (MaintenanceProvider.IsUnderMaintenance)
+{
+    <div class="alert alert-danger"><span class="glyphicon glyphicon-alert"></span> The printer is currently under maintenance. No prints can be triggered and no new prints can be uploaded</div>
 }
 
 <h2>@ViewBag.Title</h2>

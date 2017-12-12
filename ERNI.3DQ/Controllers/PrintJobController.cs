@@ -18,11 +18,13 @@ namespace ERNI.Q3D.Controllers
     {
         private readonly Lazy<DataContext> _db;
         private readonly IAdminProvider _adminProvider;
+        private readonly IMaintenanceProvider _maintenanceProvider;
 
-        public PrintJobController(Lazy<DataContext> db, IAdminProvider adminProvider)
+        public PrintJobController(Lazy<DataContext> db, IAdminProvider adminProvider, IMaintenanceProvider maintenanceProvider)
         {
             _db = db;
             _adminProvider = adminProvider;
+            _maintenanceProvider = maintenanceProvider;
         }
 
         [HttpGet]
@@ -35,6 +37,11 @@ namespace ERNI.Q3D.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> New(NewPrintJobModel model, CancellationToken c)
         {
+            if (_maintenanceProvider.IsUnderMaintenance)
+            {
+                return BadRequest("The printer is under maintenance");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -182,6 +189,11 @@ namespace ERNI.Q3D.Controllers
         [HttpPost]
         public async Task<IActionResult> Start(long id, CancellationToken c)
         {
+            if (_maintenanceProvider.IsUnderMaintenance)
+            {
+                return BadRequest("The printer is under maintenance");
+            }
+
             var job = await _db.Value.PrintJobs.Include(j => j.Owner).SingleOrDefaultAsync(_ => _.Id == id, c);
 
             if (job == null)
@@ -210,6 +222,11 @@ namespace ERNI.Q3D.Controllers
         [HttpPost]
         public async Task<IActionResult> Finish(long id, CancellationToken c)
         {
+            if (_maintenanceProvider.IsUnderMaintenance)
+            {
+                return BadRequest("The printer is under maintenance");
+            }
+
             var job = await _db.Value.PrintJobs.Include(j => j.Owner).Include(_ => _.Data).SingleOrDefaultAsync(_ => _.Id == id, c);
 
             if (job == null)
@@ -233,6 +250,11 @@ namespace ERNI.Q3D.Controllers
         [HttpPost]
         public async Task<IActionResult> Fail(long id, CancellationToken c)
         {
+            if (_maintenanceProvider.IsUnderMaintenance)
+            {
+                return BadRequest("The printer is under maintenance");
+            }
+
             var job = await _db.Value.PrintJobs.Include(j => j.Owner).SingleOrDefaultAsync(_ => _.Id == id, c);
 
             if (job == null)

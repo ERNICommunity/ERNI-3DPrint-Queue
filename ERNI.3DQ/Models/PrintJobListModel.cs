@@ -10,5 +10,7 @@ namespace ERNI.Q3D.Models
         public DateTime IntervalStart { get; set; }
 
         public bool IsAdmin { get; set; }
+
+        public bool IsMaintenance { get; set; }
     }
 }

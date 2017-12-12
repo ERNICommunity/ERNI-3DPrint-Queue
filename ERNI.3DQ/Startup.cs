@@ -47,8 +47,21 @@ namespace ERNI.Q3D
         // "Without ConfigureContainer" mechanism shown later.
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            var adminNames = Configuration.GetValue<string>("PRINT_ADMINS")
-                ?.Split(';', StringSplitOptions.RemoveEmptyEntries).ToArray();
+            SetupAdmins(builder);
+            SetupMaintenance(builder);
+        }
+
+        private void SetupMaintenance(ContainerBuilder builder)
+        {
+            var provider = new MaintenanceProvider(Configuration.GetValue<bool>("UNDER_MAINTENANCE"));
+
+            builder.RegisterInstance<IMaintenanceProvider>(provider);
+        }
+
+        private void SetupAdmins(ContainerBuilder builder)
+        {
+            var adminNames = Configuration.GetValue<string>("PRINT_ADMINS")?.Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .ToArray();
 
             var provider = new AdminProvider(adminNames);
 
