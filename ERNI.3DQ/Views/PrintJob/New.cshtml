@@ -47,12 +47,12 @@
             @if (Model.ManualMetadataMode)
             {
                 <div class="form-group">
-                    <label asp-for="FilamentLength"></label>
+                    <label asp-for="FilamentLength">Length (in meters)</label>
                     <input asp-for="FilamentLength" class="form-control" placeholder="Length in m" />
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="PrintTime"></label>
+                    <label asp-for="PrintTime">Expected print time (hh:mm)</label>
                     <input asp-for="PrintTime" class="form-control" placeholder="hh:mm" />
                 </div>
             }
