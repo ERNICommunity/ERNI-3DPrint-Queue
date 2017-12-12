@@ -8,5 +8,7 @@ namespace ERNI.Q3D.Models
         public ICollection<PrintJobModel> Jobs { get; set; }
 
         public DateTime IntervalStart { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 }

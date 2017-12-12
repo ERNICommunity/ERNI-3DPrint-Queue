@@ -19,17 +19,19 @@ namespace ERNI.Q3D.Controllers
     {
         private readonly DataContext _db;
         private readonly IOptions<PrintWindowSettings> _settings;
+        private readonly IAdminProvider _adminProvider;
 
-        public HomeController(DataContext db, IOptions<PrintWindowSettings> settings)
+        public HomeController(DataContext db, IOptions<PrintWindowSettings> settings, IAdminProvider adminProvider)
         {
             _db = db;
             _settings = settings;
+            _adminProvider = adminProvider;
         }
 
         public async Task<IActionResult> Index(CancellationToken c)
         {
             var jobs = await _db.PrintJobs.Include(j => j.Owner).Where(_ => !_.IsFinished).OrderBy(_ => _.CreatedAt).ToListAsync(c);
-
+            
             var models = jobs.Select(_ => new PrintJobModel
             {
                 Owner = _.Owner.Name,
@@ -56,7 +58,12 @@ namespace ERNI.Q3D.Controllers
                 intervalStart = _settings.Value.StartTime >= DateTime.Now.TimeOfDay ? DateTime.Today.Add(_settings.Value.StartTime) : DateTime.Now;
             }
 
-            return View(new PrintJobListModel { Jobs = models, IntervalStart = intervalStart });
+            return View(new PrintJobListModel
+            {
+                Jobs = models,
+                IntervalStart = intervalStart,
+                IsAdmin = _adminProvider.IsAdmin(User.Identity)
+            });
         }
 
         public IActionResult About()

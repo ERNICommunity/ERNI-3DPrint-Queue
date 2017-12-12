@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using System;
+using System.Linq;
+using Autofac;
 using ERNI.Q3D.Data;
 using ERNI.Q3D.Extensions;
 using ERNI.Q3D.Settings;
@@ -45,7 +47,14 @@ namespace ERNI.Q3D
         // "Without ConfigureContainer" mechanism shown later.
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            var adminNames = Configuration.GetValue<string>("PRINT_ADMINS")
+                ?.Split(';', StringSplitOptions.RemoveEmptyEntries).ToArray();
+
+            var provider = new AdminProvider(adminNames);
+
+            builder.RegisterInstance<IAdminProvider>(provider);
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, DataContext db)

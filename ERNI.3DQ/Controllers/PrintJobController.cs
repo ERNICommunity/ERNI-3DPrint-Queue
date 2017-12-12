@@ -17,10 +17,12 @@ namespace ERNI.Q3D.Controllers
     public class PrintJobController : Controller
     {
         private readonly Lazy<DataContext> _db;
+        private readonly IAdminProvider _adminProvider;
 
-        public PrintJobController(Lazy<DataContext> db)
+        public PrintJobController(Lazy<DataContext> db, IAdminProvider adminProvider)
         {
             _db = db;
+            _adminProvider = adminProvider;
         }
 
         [HttpGet]
@@ -166,7 +168,7 @@ namespace ERNI.Q3D.Controllers
                 return NotFound();
             }
 
-            if (job.Owner.Name != User.Identity.Name)
+            if (!_adminProvider.IsAdmin(User.Identity) && job.Owner.Name != User.Identity.Name)
             {
                 return Forbid();
             }
@@ -187,7 +189,7 @@ namespace ERNI.Q3D.Controllers
                 return NotFound();
             }
 
-            if (job.Owner.Name != User.Identity.Name)
+            if (!_adminProvider.IsAdmin(User.Identity) && job.Owner.Name != User.Identity.Name)
             {
                 return Forbid();
             }
@@ -215,7 +217,7 @@ namespace ERNI.Q3D.Controllers
                 return NotFound();
             }
 
-            if (job.Owner.Name != User.Identity.Name)
+            if (!_adminProvider.IsAdmin(User.Identity) && job.Owner.Name != User.Identity.Name)
             {
                 return Forbid();
             }
@@ -238,7 +240,7 @@ namespace ERNI.Q3D.Controllers
                 return NotFound();
             }
 
-            if (job.Owner.Name != User.Identity.Name)
+            if (!_adminProvider.IsAdmin(User.Identity) && job.Owner.Name != User.Identity.Name)
             {
                 return Forbid();
             }
